@@ -5,30 +5,30 @@ function App() {
 	const [value, setValue] = useState('');
 	const [list, setList] = useState([]);
 	const [error, setError] = useState('');
-	let isValueValid = false;
 
 	function onInputButtonClick() {
-		let promptValue = prompt('Введите значение');
+		const promptValue = prompt('Введите значение');
 		console.log(promptValue);
 
-		promptValue.length < 3
-			? setError('Введенное значение должно содержать минимум 3 символа')
-			: setError('');
-		if (!error) {
-			promptValue = '';
-			isValueValid = true;
+		if (promptValue === null || promptValue.length < 3) {
+			setError('Введенное значение должно содержать минимум 3 символа');
+			setValue('');
+		}
+		if (promptValue !== null && promptValue.length >= 3) {
+			setValue(promptValue);
+			setError('');
 		}
 		return promptValue;
 	}
-	const handleClick = () => setValue(onInputButtonClick);
 
+	const isValueValid = Boolean(value);
 	const updatedList = [...list, { id: Date.now(), value }];
 
 	function onAddButtonClick() {
 		if (isValueValid) {
 			setList(updatedList);
-			this.setState({ value: '' });
-			this.setState({ error: '' });
+			setValue('');
+			setError('');
 		}
 	}
 
@@ -39,24 +39,34 @@ function App() {
 				Текущее значение <code>value</code>: "
 				<output className={styles['current-value']}>{value}</output>"
 			</p>
-			{error !== '' ? <div className={styles.error}>{error}</div> : null}
+			{error ? <div className={styles.error}>{error}</div> : ''}
 			<div className={styles['button-container']}>
-				<button className={styles.button} onClick={handleClick}>
+				<button className={styles.button} onClick={onInputButtonClick}>
 					Ввести новое
 				</button>
 				<button
 					className={styles.button}
-					onClick={onAddButtonClick}
 					disabled={!isValueValid}
+					onClick={onAddButtonClick}
 				>
 					Добавить в список
 				</button>
 			</div>
 			<div className={styles['list-container']}>
 				<h2 className={styles['list-heading']}>Список:</h2>
-				<p className={styles['no-margin-text']}>Нет добавленных элементов</p>
+				{list.length < 1 ? (
+					<p className={styles['no-margin-text']}>Нет добавленных элементов</p>
+				) : null}
 				<ul className={styles.list}>
-					<li className={styles['list-item']}>Первый элемент</li>
+					{list.map(({ id, value }) => (
+						<li className={styles['list-item']} key={id}>
+							{value} -{' '}
+							{new Intl.DateTimeFormat('ru', {
+								dateStyle: 'short',
+								timeStyle: 'short',
+							}).format(id)}
+						</li>
+					))}
 				</ul>
 			</div>
 			<header className={styles['app-header']}></header>
