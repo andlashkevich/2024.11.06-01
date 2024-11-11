@@ -22,9 +22,9 @@ function App() {
 	}
 
 	const isValueValid = Boolean(value);
-	const updatedList = [...list, { id: Date.now(), value }];
 
 	function onAddButtonClick() {
+		const updatedList = [...list, { id: Date.now(), value }];
 		if (isValueValid) {
 			setList(updatedList);
 			setValue('');
